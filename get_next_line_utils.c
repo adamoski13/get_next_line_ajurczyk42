@@ -84,3 +84,21 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	dest[i] = '\0';
 	return (dest);
 }
+
+char	*ft_strchr(char *str, int c)
+{
+	unsigned int	i;
+	char			temp;
+
+	temp = (char)c;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == temp)
+			return ((char *)&str[i]);
+		i++;
+	}
+	if (str[i] == temp)
+		return ((char *)&str[i]);
+	return (0);
+}
