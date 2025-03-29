@@ -25,7 +25,7 @@ char	*read_buffer_size_line(int fd, char *buffer_line, char *source)
 		if (s_read == -1)
 		{
 			free(buffer_line);
-			return (0);
+			return (NULL);
 		}
 		else if (s_read == 0)
 			break ;
@@ -42,29 +42,42 @@ char	*read_buffer_size_line(int fd, char *buffer_line, char *source)
 	return (buffer_line);
 }
 
-char	*remember(char *final_line)
+char	*cut_buffer_line(char *line)
 {
 	char	*buffer_line;
 	ssize_t	i;
 
 	i = 0;
-	while (final_line[i] != '\n' && final_line[i] != '\0')
+	while (line[i] != '\n' && line[i] != '\0')
 		i++;
-	if (final_line[i] == 0)
-		return (0);
-	buffer_line = ft_substr(final_line, i + 1, ft_strlen(final_line) - i);
+	if (line[i] == 0)
+		return (NULL);
+	buffer_line = ft_substr(line, i + 1, ft_strlen(line) - i);
 	if (*buffer_line == 0)
 	{
 		free(buffer_line);
 		buffer_line = NULL;
 	}
-	final_line[i + 1] = 0;
 	return (buffer_line);
+}
+
+char	*cut_line(char *line)
+{
+	size_t	i;
+	char	*temp2;
+
+	i = 0;
+	while (line[i] != '\n' && line[i] != '\0')
+		i++;
+	temp2 = ft_substr(line, 0, i + 1);
+	free(line);
+	line = NULL;
+	return (temp2);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*final_line;
+	char		*line;
 	char		*source;
 	static char	*buffer_line;
 
@@ -79,13 +92,14 @@ char	*get_next_line(int fd)
 		source = NULL;
 		return (NULL);
 	}
-	final_line = read_buffer_size_line(fd, buffer_line, source);
+	line = read_buffer_size_line(fd, buffer_line, source);
 	free(source);
 	source = NULL;
-	if (!final_line)
+	if (!line)
 		return (NULL);
-	buffer_line = remember(final_line);
-	return (final_line);
+	buffer_line = cut_buffer_line(line);
+	line = cut_line(line);
+	return (line);
 }
 
 int	main(void)
